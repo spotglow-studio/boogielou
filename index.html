@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boogielou — DJ</title>
+<link href="https://fonts.googleapis.com/css2?family=Righteous&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,600;1,9..40,300&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --fuchsia:#e879f9;--lilac:#c084fc;--aqua:#67e8f9;--peach:#fdba74;
+  --white:#fdf4ff;--dark:#0d0a14;--grey:rgba(253,244,255,.55);
+  --card:rgba(20,12,32,.55);--mid:rgba(16,10,26,.65);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--dark);color:var(--white);overflow-x:hidden}
+
+/* ── AURORA ── */
+.aurora-bg{position:fixed;inset:0;z-index:-2;background:var(--dark)}
+.aurora-layer{position:absolute;inset:-60%;animation-timing-function:ease-in-out;animation-iteration-count:infinite;animation-direction:alternate;filter:blur(35px)}
+.aurora-layer:nth-child(1){background:radial-gradient(ellipse 55% 45% at 25% 35%,rgba(232,121,249,.75) 0%,transparent 60%),radial-gradient(ellipse 45% 55% at 75% 25%,rgba(103,232,249,.65) 0%,transparent 55%);animation:a1 10s ease-in-out infinite alternate}
+.aurora-layer:nth-child(2){background:radial-gradient(ellipse 60% 40% at 70% 70%,rgba(192,132,252,.7) 0%,transparent 55%),radial-gradient(ellipse 40% 50% at 20% 75%,rgba(253,186,116,.5) 0%,transparent 50%);animation:a2 13s ease-in-out infinite alternate}
+.aurora-layer:nth-child(3){background:radial-gradient(ellipse 50% 60% at 50% 50%,rgba(74,222,128,.35) 0%,transparent 50%),radial-gradient(ellipse 55% 35% at 85% 15%,rgba(232,121,249,.5) 0%,transparent 50%),radial-gradient(ellipse 40% 45% at 10% 20%,rgba(103,232,249,.4) 0%,transparent 50%);animation:a3 17s ease-in-out infinite alternate}
+@keyframes a1{0%{transform:translate(0,0) scale(1)}50%{transform:translate(-4%,3%) scale(1.06)}100%{transform:translate(5%,-4%) scale(.96)}}
+@keyframes a2{0%{transform:translate(0,0) scale(1.03)}50%{transform:translate(4%,4%) scale(.97)}100%{transform:translate(-5%,-3%) scale(1.05)}}
+@keyframes a3{0%{transform:translate(0,0) scale(1)}40%{transform:translate(3%,-5%) scale(1.04)}100%{transform:translate(-4%,4%) scale(.98)}}
+
+/* Grain */
+.grain{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.06;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:180px 180px}
+
+/* ── SPARKLES ── */
+.sparkle{position:fixed;pointer-events:none;z-index:99998;width:7px;height:7px;border-radius:50%;animation:sparkleFade .9s ease-out forwards}
+@keyframes sparkleFade{0%{transform:scale(1) translate(0,0);opacity:1}100%{transform:scale(0) translate(var(--tx),var(--ty));opacity:0}}
+
+/* ── CURSOR ── */
+*{cursor:none!important}
+#cursor{position:fixed;width:28px;height:28px;border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);background:radial-gradient(ellipse at 30% 25%,rgba(255,255,255,.95) 0%,transparent 35%),conic-gradient(#ccc 0deg,#eee 12deg,#888 24deg,#ddd 36deg,#bbb 48deg,#fff 60deg,#999 72deg,#ccc 84deg,#eee 96deg,#888 108deg,#ddd 120deg,#bbb 132deg,#fff 144deg,#999 156deg,#ccc 168deg,#eee 180deg,#888 192deg,#ddd 204deg,#bbb 216deg,#fff 228deg,#999 240deg,#ccc 252deg,#eee 264deg,#888 276deg,#ddd 288deg,#bbb 300deg,#fff 312deg,#999 324deg,#ccc 336deg,#eee 348deg);box-shadow:0 0 14px rgba(232,121,249,.8),0 0 28px rgba(103,232,249,.5);animation:spin 2.5s linear infinite}
+#cursor::before{content:'';position:absolute;inset:0;border-radius:50%;background:repeating-linear-gradient(0deg,transparent,transparent 4px,rgba(0,0,0,.2) 4px,rgba(0,0,0,.2) 5px)}
+#cursor::after{content:'';position:absolute;inset:0;border-radius:50%;background:repeating-linear-gradient(90deg,transparent,transparent 4px,rgba(0,0,0,.2) 4px,rgba(0,0,0,.2) 5px)}
+@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:900;display:flex;justify-content:space-between;align-items:center;padding:1.2rem 3rem;background:linear-gradient(to bottom,rgba(13,10,20,.96) 75%,transparent);backdrop-filter:blur(12px)}
+.nav-logo{font-family:'Righteous',cursive;font-size:1.6rem;letter-spacing:2px;color:var(--white);text-decoration:none;text-shadow:0 0 20px rgba(232,121,249,.6)}
+.nav-links{display:flex;gap:2rem;list-style:none;align-items:center}
+.nav-links a{font-size:.72rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--grey);text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:var(--fuchsia)}
+.nav-book{color:var(--fuchsia)!important;border:1px solid rgba(232,121,249,.5);padding:.4rem 1.2rem;transition:background .2s!important;backdrop-filter:blur(6px)}
+.nav-book:hover{background:rgba(232,121,249,.15)!important}
+
+/* ── RETRO TITLE ── */
+.retro-title-wrap{position:relative;text-align:center;margin-bottom:.6rem;animation:fadeDown .9s cubic-bezier(.22,1,.36,1) both}
+@keyframes fadeDown{from{transform:translateY(-24px);opacity:0}to{transform:translateY(0);opacity:1}}
+.retro-title{font-family:'Righteous',cursive;font-size:clamp(3.5rem,12vw,8.5rem);letter-spacing:3px;line-height:1.05;position:relative;display:inline-block}
+.retro-title .rt-shadow{position:absolute;inset:0;color:transparent;-webkit-text-stroke:12px rgba(255,255,255,.9);paint-order:stroke fill;z-index:0;transform:translate(3px,4px);filter:blur(1px)}
+.retro-title .rt-outline{position:absolute;inset:0;z-index:1;color:transparent;-webkit-text-stroke:8px white;paint-order:stroke fill}
+.retro-title .rt-fill{position:relative;z-index:2;background:linear-gradient(135deg,#f0abfc 0%,#e879f9 18%,#c084fc 35%,#93c5fd 52%,#67e8f9 68%,#fdba74 82%,#e879f9 100%);background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradShift 5s ease-in-out infinite alternate}
+@keyframes gradShift{0%{background-position:0% 50%}100%{background-position:100% 50%}}
+
+/* ── HERO ── */
+.hero{
+  padding-top:72px; /* nav height */
+  display:flex;flex-direction:column;align-items:center;
+  position:relative;overflow:hidden;z-index:1;
+  /* fill viewport so ticker lands just at bottom */
+  min-height:100dvh;
+  justify-content:center;
+  gap:.8rem;
+  padding-bottom:0;
+}
+.glitter-field{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.glitter-field span{position:absolute;border-radius:50%;opacity:0;animation:glitterFloat var(--gd) ease-in-out var(--gdelay) infinite}
+@keyframes glitterFloat{0%{opacity:0;transform:translateY(0) scale(.5)}20%{opacity:1}80%{opacity:.5}100%{opacity:0;transform:translateY(-100px) scale(1.5)}}
+@keyframes fadeUp{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* VIDEO — big and centered */
+.video-wrap{position:relative;width:min(480px,82vw);aspect-ratio:1;flex-shrink:0;animation:fadeUp 1s .3s both}
+.video-glow{position:absolute;inset:-20px;background:conic-gradient(from 0deg,var(--fuchsia),var(--aqua),var(--lilac),var(--peach),var(--fuchsia));filter:blur(32px);opacity:.55;animation:rotateBg 5s linear infinite;z-index:0}
+@keyframes rotateBg{to{transform:rotate(360deg)}}
+.video-inner{position:relative;z-index:1;width:100%;height:100%;overflow:hidden;border:2px solid rgba(255,255,255,.2)}
+.video-inner iframe{width:100%;height:100%;display:block}
+
+/* Sound on — overlay inside bottom right of video */
+.mute-btn{
+  position:absolute;bottom:10px;right:10px;z-index:10;
+  background:rgba(13,10,20,.72);
+  border:1px solid rgba(232,121,249,.5);
+  color:var(--fuchsia);
+  font-family:'DM Sans',sans-serif;font-size:.62rem;letter-spacing:1.5px;text-transform:uppercase;
+  padding:.3rem .8rem;display:flex;align-items:center;gap:.4rem;
+  transition:all .2s;white-space:nowrap;backdrop-filter:blur(8px);
+}
+.mute-btn:hover{background:rgba(232,121,249,.2)}
+
+/* Hero buttons — below ticker so they appear after */
+.hero-btns{display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center;animation:fadeUp 1s .5s both;padding:1.2rem 1rem 1.5rem}
+
+/* EQ sides — desktop only, hidden mobile */
+.eq-side{display:flex;flex-direction:column;gap:1rem;align-items:center;flex-shrink:0}
+.eq-bar-group{display:flex;gap:6px;align-items:flex-end;height:120px}
+.eq-bar{width:8px;border-radius:3px;animation:eqBounce var(--dur) ease-in-out infinite alternate}
+.eq-left .eq-bar{background:linear-gradient(to top,var(--fuchsia),var(--aqua))}
+.eq-right .eq-bar{background:linear-gradient(to top,var(--lilac),var(--peach))}
+@keyframes eqBounce{from{height:10px}to{height:var(--h)}}
+.eq-vline{width:1px;height:55px;background:linear-gradient(to bottom,transparent,var(--fuchsia),transparent)}
+.eq-dot{display:grid;grid-template-columns:repeat(4,8px);gap:6px;opacity:.2}
+.eq-dot span{width:8px;height:8px;border-radius:50%;background:var(--white)}
+
+/* Stage row — video + optional EQ */
+.hero-stage{display:flex;align-items:center;gap:2.5rem;justify-content:center;width:100%}
+
+/* ── TICKER ── */
+.ticker-wrap{overflow:hidden;white-space:nowrap;padding:.6rem 0;position:relative;z-index:1;background:linear-gradient(90deg,var(--fuchsia),var(--lilac),var(--aqua),var(--peach),var(--fuchsia));background-size:400% 100%;animation:tickerBg 8s linear infinite;flex-shrink:0}
+@keyframes tickerBg{0%{background-position:0% 50%}100%{background-position:400% 50%}}
+.ticker{display:inline-block;animation:ticker 26s linear infinite;font-family:'Righteous',cursive;font-size:1rem;letter-spacing:3px;color:rgba(13,10,20,.85)}
+.ticker span{margin:0 1.5rem}
+.ticker span::before{content:'✦';margin-right:1.5rem;opacity:.6}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ── BUTTONS ── */
+.btn{padding:.65rem 1.5rem;font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;text-decoration:none;transition:all .2s;display:inline-flex;align-items:center;gap:.5rem;backdrop-filter:blur(6px)}
+.btn-primary{background:var(--fuchsia);color:var(--dark);border:1px solid var(--fuchsia);font-weight:700}
+.btn-primary:hover{background:transparent;color:var(--fuchsia)}
+.btn-outline{background:rgba(255,255,255,.05);color:var(--white);border:1px solid rgba(255,255,255,.25)}
+.btn-outline:hover{border-color:var(--fuchsia);color:var(--fuchsia)}
+.btn-purple{background:rgba(192,132,252,.1);color:var(--lilac);border:1px solid rgba(192,132,252,.4)}
+.btn-purple:hover{background:rgba(192,132,252,.2);border-color:var(--lilac)}
+.btn-aqua{background:transparent;color:var(--aqua);border:1px solid rgba(103,232,249,.4)}
+.btn-aqua:hover{background:rgba(103,232,249,.1)}
+
+/* ── GLASS SECTIONS ── */
+.glass{background:rgba(13,10,20,.45);backdrop-filter:blur(24px);border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);position:relative;z-index:1}
+.section-z{position:relative;z-index:1}
+.divider{height:1px;background:linear-gradient(to right,transparent,rgba(255,255,255,.1),transparent);position:relative;z-index:1}
+
+/* ── ABOUT ── */
+.about{padding:7rem 2rem;max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center}
+.about-img{position:relative}
+.about-img img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;filter:saturate(1.15)}
+.about-img::before{content:'';position:absolute;inset:-8px;border:1px solid rgba(232,121,249,.4);opacity:.5;transform:translate(8px,8px);z-index:-1}
+.about-img::after{content:'';position:absolute;bottom:-14px;left:-14px;width:55%;height:3px;background:linear-gradient(to right,var(--fuchsia),var(--aqua))}
+.about-label{font-size:.68rem;letter-spacing:4px;text-transform:uppercase;color:var(--grey);margin-bottom:.4rem}
+.about-title{font-family:'Righteous',cursive;font-size:clamp(2.5rem,5vw,4rem);letter-spacing:2px;line-height:1;margin-bottom:1.5rem;background:linear-gradient(135deg,var(--white),var(--fuchsia),var(--aqua));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.about-text{color:var(--grey);line-height:1.85;font-size:.95rem;margin-bottom:1rem}
+.about-quote{border-left:3px solid var(--fuchsia);padding:1rem 1.5rem;margin:1.5rem 0;background:rgba(232,121,249,.07);font-family:'Playfair Display',serif;font-style:italic;font-size:1rem;color:var(--white);line-height:1.8;backdrop-filter:blur(4px)}
+.about-quote::before{content:'\201C';font-size:2rem;color:var(--fuchsia);line-height:0;vertical-align:-.5rem;margin-right:.3rem}
+.about-quote::after{content:'\201D';font-size:2rem;color:var(--fuchsia);line-height:0;vertical-align:-.5rem;margin-left:.3rem}
+.tags{display:flex;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+.tag{font-size:.62rem;letter-spacing:2px;text-transform:uppercase;padding:.3rem .85rem;border:1px solid rgba(232,121,249,.3);color:var(--fuchsia);background:rgba(232,121,249,.05)}
+.about-btns{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:2rem}
+
+/* ── SECTION HEADERS ── */
+.section-header{text-align:center;margin-bottom:3rem}
+.section-title{font-family:'Righteous',cursive;font-size:clamp(2.5rem,6vw,4.5rem);letter-spacing:4px;background:linear-gradient(135deg,var(--white) 0%,var(--fuchsia) 40%,var(--aqua) 80%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.section-sub{font-size:.68rem;letter-spacing:3px;text-transform:uppercase;color:var(--grey);margin-top:.4rem}
+
+/* ── SETS ── */
+.sets{padding:6rem 2rem}
+.sets-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem}
+.set-card{background:rgba(13,10,20,.6);border:1px solid rgba(255,255,255,.09);overflow:hidden;transition:border-color .2s,transform .2s;text-decoration:none;color:var(--white);display:block;backdrop-filter:blur(12px)}
+.set-card:hover{border-color:var(--fuchsia);transform:translateY(-4px);box-shadow:0 8px 30px rgba(232,121,249,.2)}
+.set-thumb{position:relative;aspect-ratio:16/9;overflow:hidden}
+.set-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .4s;filter:saturate(1.2)}
+.set-card:hover .set-thumb img{transform:scale(1.05)}
+.set-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.4);opacity:0;transition:opacity .2s}
+.set-card:hover .set-play{opacity:1}
+.play-icon{width:52px;height:52px;border-radius:50%;background:var(--fuchsia);display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--dark)}
+.set-info{padding:1rem 1.2rem 1.2rem}
+.set-platform{font-size:.6rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--aqua);margin-bottom:.3rem}
+.set-name{font-family:'Righteous',cursive;font-size:1.3rem;letter-spacing:2px}
+.sets-more{text-align:center;margin-top:2.5rem}
+
+/* ── INSTAGRAM ── */
+.instagram{padding:6rem 2rem}
+.insta-grid{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem}
+.insta-embed-wrap{overflow:hidden;border:1px solid rgba(232,121,249,.15)}
+.insta-embed-wrap .instagram-media{max-width:100%!important;min-width:unset!important;width:100%!important;margin:0!important}
+.insta-follow{text-align:center;margin-top:2rem}
+
+/* ── MASCOT ── */
+.mascot-section{padding:5rem 2rem;display:flex;flex-direction:column;align-items:center}
+.mascot-title{font-family:'Righteous',cursive;font-size:clamp(2rem,5vw,3.5rem);letter-spacing:4px;margin-bottom:3rem;text-align:center;background:linear-gradient(135deg,var(--fuchsia),var(--aqua),var(--lilac));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.mascot-duo{display:flex;align-items:flex-end;gap:4rem;justify-content:center;flex-wrap:wrap}
+#disco-mascot{width:min(260px,50vw);filter:drop-shadow(0 0 25px rgba(232,121,249,.6));transition:transform .1s ease-out}
+.mascot-photo{width:min(230px,45vw);position:relative}
+.mascot-photo img{width:100%;aspect-ratio:3/4;object-fit:cover;object-position:top;border:2px solid rgba(232,121,249,.35);filter:saturate(1.2)}
+.mascot-photo::after{content:'';position:absolute;bottom:-8px;right:-8px;width:100%;height:100%;border:2px solid rgba(103,232,249,.25);z-index:-1}
+.mascot-body{animation:mascotBounce .5s ease-in-out infinite alternate;transform-origin:50% 90%}
+.mascot-arm-l{animation:armSwingL .5s ease-in-out infinite alternate;transform-origin:35% 48%}
+.mascot-arm-r{animation:armSwingR .5s ease-in-out infinite alternate;transform-origin:65% 48%}
+.mascot-leg-l{animation:legSwingL .5s ease-in-out infinite alternate;transform-origin:42% 82%}
+.mascot-leg-r{animation:legSwingR .5s ease-in-out infinite alternate;transform-origin:58% 82%}
+.mascot-sparkle{animation:sparkleGlow 1s ease-in-out infinite alternate}
+@keyframes mascotBounce{from{transform:translateY(0) rotate(-2deg)}to{transform:translateY(-10px) rotate(2deg)}}
+@keyframes armSwingL{from{transform:rotate(-25deg)}to{transform:rotate(15deg)}}
+@keyframes armSwingR{from{transform:rotate(25deg)}to{transform:rotate(-15deg)}}
+@keyframes legSwingL{from{transform:rotate(-12deg)}to{transform:rotate(8deg)}}
+@keyframes legSwingR{from{transform:rotate(12deg)}to{transform:rotate(-8deg)}}
+@keyframes sparkleGlow{from{opacity:.3;transform:scale(.7)}to{opacity:1;transform:scale(1.3)}}
+
+/* ── NEXT UP — compact centered ── */
+.nextup-section{padding:6rem 2rem}
+.nextup{
+  max-width:700px;margin:0 auto;
+  display:flex;flex-direction:column;align-items:center;
+  text-align:center;gap:1.5rem;
+}
+.nextup-inner{display:flex;align-items:center;gap:3rem;justify-content:center;flex-wrap:wrap}
+.nextup-label{font-size:.68rem;letter-spacing:3px;text-transform:uppercase;color:var(--grey);margin-bottom:.4rem}
+.nextup-title{font-family:'Righteous',cursive;font-size:clamp(3rem,7vw,5rem);letter-spacing:3px;line-height:1;margin-bottom:.8rem;background:linear-gradient(135deg,var(--white),var(--fuchsia),var(--aqua));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nextup-text{color:var(--grey);font-size:.92rem;line-height:1.75;max-width:380px;margin-bottom:1.5rem}
+.nextup-btns{display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center}
+.nextup-img img{width:260px;filter:drop-shadow(0 0 30px rgba(232,121,249,.5));animation:floatUpDown 3.5s ease-in-out infinite}
+@keyframes floatUpDown{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+
+/* ── CONNECT ── */
+.connect{padding:7rem 2rem;text-align:center;position:relative;overflow:hidden}
+.connect-title{font-family:'Righteous',cursive;font-size:clamp(3rem,8vw,7rem);letter-spacing:4px;line-height:1;margin-bottom:.5rem;background:linear-gradient(135deg,var(--white) 0%,var(--fuchsia) 30%,var(--lilac) 60%,var(--aqua) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200%;animation:gradShift 5s ease-in-out infinite alternate}
+.connect-sub{color:var(--grey);font-size:.8rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:3rem}
+.connect-links{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+
+/* ── FOOTER ── */
+footer{padding:2rem 3rem;border-top:1px solid rgba(255,255,255,.07);display:flex;justify-content:space-between;align-items:center;color:var(--grey);font-size:.72rem;letter-spacing:1.5px;flex-wrap:wrap;gap:.8rem;position:relative;z-index:1;background:rgba(13,10,20,.8);backdrop-filter:blur(12px)}
+.footer-logo{font-family:'Righteous',cursive;font-size:1.4rem;letter-spacing:3px;color:var(--white);text-shadow:0 0 15px rgba(232,121,249,.5)}
+.footer-credit a{color:var(--fuchsia);text-decoration:none}
+.footer-credit a:hover{color:var(--white)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  nav{padding:1rem 1.5rem}
+  .nav-links li:nth-child(-n+2){display:none}
+  .eq-side{display:none}
+  .about{grid-template-columns:1fr;gap:2.5rem}
+  .mascot-duo{flex-direction:column;align-items:center}
+  .insta-grid{grid-template-columns:1fr}
+  footer{flex-direction:column;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<div class="aurora-bg"><div class="aurora-layer"></div><div class="aurora-layer"></div><div class="aurora-layer"></div></div>
+<div class="grain"></div>
+
+<svg style="position:absolute;width:0;height:0" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="grainFilter" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency=".65" numOctaves="3" result="noise" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0" in="noise" result="grey"/>
+      <feBlend in="SourceGraphic" in2="grey" mode="multiply" result="blended"/>
+      <feComposite in="blended" in2="SourceGraphic" operator="in"/>
+    </filter>
+  </defs>
+</svg>
+
+<div id="cursor"></div>
+
+<nav>
+  <a href="#" class="nav-logo">Boogielou</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#sets">Sets</a></li>
+    <li><a href="#instagram">Instagram</a></li>
+    <li><a href="#connect" class="nav-book">Connect ✦</a></li>
+  </ul>
+</nav>
+
+<!-- HERO — fills viewport, ticker at bottom -->
+<section class="hero">
+  <div class="glitter-field" aria-hidden="true">
+    <span style="left:5%;top:20%;--gd:4s;--gdelay:0s;width:4px;height:4px;background:var(--fuchsia)"></span>
+    <span style="left:15%;top:70%;--gd:5s;--gdelay:.5s;width:3px;height:3px;background:var(--lilac)"></span>
+    <span style="left:25%;top:40%;--gd:3.5s;--gdelay:1s;width:5px;height:5px;background:var(--aqua)"></span>
+    <span style="left:40%;top:80%;--gd:4.5s;--gdelay:.3s;width:3px;height:3px;background:var(--peach)"></span>
+    <span style="left:55%;top:30%;--gd:3.8s;--gdelay:1.2s;width:4px;height:4px;background:var(--white)"></span>
+    <span style="left:65%;top:65%;--gd:4.2s;--gdelay:.7s;width:5px;height:5px;background:var(--fuchsia)"></span>
+    <span style="left:75%;top:15%;--gd:5.2s;--gdelay:.2s;width:3px;height:3px;background:var(--lilac)"></span>
+    <span style="left:85%;top:55%;--gd:3.6s;--gdelay:1.5s;width:4px;height:4px;background:var(--aqua)"></span>
+    <span style="left:10%;top:50%;--gd:4.1s;--gdelay:2s;width:5px;height:5px;background:var(--peach)"></span>
+    <span style="left:70%;top:90%;--gd:4.6s;--gdelay:.4s;width:3px;height:3px;background:var(--aqua)"></span>
+  </div>
+
+  <!-- Title -->
+  <div class="retro-title-wrap">
+    <div class="retro-title">
+      <span class="rt-shadow" aria-hidden="true">BOOGIELOU</span>
+      <span class="rt-outline" aria-hidden="true">BOOGIELOU</span>
+      <span class="rt-fill">BOOGIELOU</span>
+    </div>
+  </div>
+
+  <!-- Video + EQ stage -->
+  <div class="hero-stage">
+    <!-- EQ left — desktop only -->
+    <div class="eq-side eq-left">
+      <div class="eq-bar-group">
+        <div class="eq-bar" style="--dur:.55s;--h:95px"></div>
+        <div class="eq-bar" style="--dur:.80s;--h:65px"></div>
+        <div class="eq-bar" style="--dur:.65s;--h:110px"></div>
+        <div class="eq-bar" style="--dur:.90s;--h:75px"></div>
+        <div class="eq-bar" style="--dur:.70s;--h:88px"></div>
+        <div class="eq-bar" style="--dur:.50s;--h:55px"></div>
+      </div>
+      <div class="eq-vline"></div>
+      <div class="eq-dot"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    </div>
+
+    <!-- Video -->
+    <div class="video-wrap">
+      <div class="video-glow"></div>
+      <div class="video-inner">
+        <iframe id="yt-player" src="https://www.youtube.com/embed/DAQnsSWLA_g?autoplay=1&mute=1&loop=1&playlist=DAQnsSWLA_g&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      </div>
+      <button class="mute-btn" id="muteBtn" onclick="toggleMute()">
+        <span id="muteIcon">🔇</span><span id="muteLabel">Sound on</span>
+      </button>
+    </div>
+
+    <!-- EQ right — desktop only -->
+    <div class="eq-side eq-right">
+      <div class="eq-dot"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="eq-vline" style="background:linear-gradient(to bottom,transparent,var(--lilac),transparent)"></div>
+      <div class="eq-bar-group">
+        <div class="eq-bar" style="--dur:.75s;--h:80px"></div>
+        <div class="eq-bar" style="--dur:.55s;--h:55px"></div>
+        <div class="eq-bar" style="--dur:.85s;--h:105px"></div>
+        <div class="eq-bar" style="--dur:.65s;--h:70px"></div>
+        <div class="eq-bar" style="--dur:.95s;--h:110px"></div>
+        <div class="eq-bar" style="--dur:.60s;--h:60px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ticker INSIDE hero at bottom so it's always visible -->
+  <div class="ticker-wrap" style="width:100vw;margin-top:auto;flex-shrink:0">
+    <div class="ticker">
+      <span>House</span><span>Disco</span><span>Funk</span><span>UKG</span><span>Electronic</span><span>Good Vibes</span><span>Boogielou</span><span>DJ</span><span>Bass</span><span>Groovy</span><span>House</span><span>Disco</span><span>Funk</span><span>UKG</span><span>Electronic</span><span>Good Vibes</span><span>Boogielou</span><span>DJ</span><span>Bass</span><span>Groovy</span>
+    </div>
+  </div>
+
+  <!-- Buttons below ticker -->
+  <div class="hero-btns">
+    <a href="https://linktr.ee/boogielou.mp3" target="_blank" class="btn btn-primary">🔗 All Links</a>
+    <a href="https://soundcloud.com/boogielou" target="_blank" class="btn btn-outline">Soundcloud</a>
+    <a href="#" class="btn btn-purple">⬇ Press Kit</a>
+    <a href="#connect" class="btn btn-aqua">Contact ✦</a>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ABOUT -->
+<section class="glass">
+  <div class="about" id="about">
+    <div class="about-img">
+      <img src="https://res.cloudinary.com/dvznmnpys/image/upload/w_800,q_auto,f_auto/v1773769979/Boogielou_image_2_nvhrzy.png" alt="Boogielou DJ" loading="lazy"/>
+    </div>
+    <div>
+      <p class="about-label">DJ</p>
+      <h2 class="about-title">BOOGIELOU</h2>
+      <p class="about-text">She's the one who turns up in an inflatable costume and leaves the dance floor absolutely ecstatic. Boogielou is a DJ who genuinely loves what she does — and that energy is impossible not to catch.</p>
+      <blockquote class="about-quote">Hi! I'm boogielou (aka Charlie), a London-based DJ who plays a fusion of house music, disco/funk, UKG and bass-heavy beats — basically anything that'll get you boogie'ing! With a particular love for classic anthems with a bassy twist.</blockquote>
+      <div class="tags">
+        <span class="tag">House</span><span class="tag">Disco / Funk</span>
+        <span class="tag">UKG</span><span class="tag">Bass</span>
+        <span class="tag">Electronic</span><span class="tag">Tech</span>
+      </div>
+      <div class="about-btns">
+        <a href="https://www.youtube.com/watch?v=fHJHl4QiH6E" target="_blank" class="btn btn-outline">Watch Sets</a>
+        <a href="#" class="btn btn-purple">⬇ Press Kit</a>
+        <a href="#connect" class="btn btn-primary">Contact</a>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+<!-- SETS -->
+<section class="section-z sets" id="sets">
+  <div class="section-header">
+    <h2 class="section-title">SETS</h2>
+    <p class="section-sub">Click the links</p>
+  </div>
+  <div class="sets-grid">
+    <a class="set-card" href="https://www.youtube.com/watch?v=fHJHl4QiH6E" target="_blank">
+      <div class="set-thumb"><img src="https://img.youtube.com/vi/fHJHl4QiH6E/maxresdefault.jpg" alt="Set 1"/><div class="set-play"><div class="play-icon">▶</div></div></div>
+      <div class="set-info"><p class="set-platform">YouTube</p><p class="set-name">Watch on YouTube</p></div>
+    </a>
+    <a class="set-card" href="https://www.youtube.com/watch?v=l8vZci8FKxU" target="_blank">
+      <div class="set-thumb"><img src="https://img.youtube.com/vi/l8vZci8FKxU/maxresdefault.jpg" alt="Set 2"/><div class="set-play"><div class="play-icon">▶</div></div></div>
+      <div class="set-info"><p class="set-platform">YouTube</p><p class="set-name">Watch on YouTube</p></div>
+    </a>
+    <a class="set-card" href="https://www.mixcloud.com/back2backdjbattle/talent-spotlight-boogielou-20/" target="_blank">
+      <div class="set-thumb"><img src="https://res.cloudinary.com/dvznmnpys/image/upload/w_600,q_auto,f_auto/v1773772106/Mixcloud_quuiha.jpg" alt="Mixcloud"/><div class="set-play"><div class="play-icon">▶</div></div></div>
+      <div class="set-info"><p class="set-platform">Mixcloud</p><p class="set-name">Talent Spotlight — Boogielou</p></div>
+    </a>
+  </div>
+  <div class="sets-more"><a href="https://soundcloud.com/boogielou" target="_blank" class="btn btn-primary">More on Soundcloud</a></div>
+</section>
+<div class="divider"></div>
+
+<!-- INSTAGRAM -->
+<section class="glass instagram" id="instagram">
+  <div class="section-header" style="padding-top:4rem">
+    <h2 class="section-title">INSTAGRAM</h2>
+    <p class="section-sub">@boogielou.mp3</p>
+  </div>
+  <div class="insta-grid" style="padding-bottom:3rem">
+    <div class="insta-embed-wrap"><blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="https://www.instagram.com/reel/DR4F90uDH2z/" data-instgrm-version="14"></blockquote></div>
+    <div class="insta-embed-wrap"><blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="https://www.instagram.com/p/DSesXlrjA-Q/" data-instgrm-version="14"></blockquote></div>
+    <div class="insta-embed-wrap"><blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="https://www.instagram.com/p/DSaSaCdidJv/" data-instgrm-version="14"></blockquote></div>
+    <div class="insta-embed-wrap"><blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="https://www.instagram.com/p/DOT5MmCjEf6/" data-instgrm-version="14"></blockquote></div>
+  </div>
+  <div class="insta-follow" style="padding-bottom:4rem"><a href="https://www.instagram.com/boogielou.mp3/" target="_blank" class="btn btn-outline">Follow on Instagram</a></div>
+</section>
+<script async src="//www.instagram.com/embed.js"></script>
+<div class="divider"></div>
+
+<!-- MASCOT -->
+<section class="section-z mascot-section">
+  <h2 class="mascot-title">KEEP IT BOOGIE 🪩</h2>
+  <div class="mascot-duo">
+    <svg id="disco-mascot" viewBox="0 0 300 360" xmlns="http://www.w3.org/2000/svg">
+      <g class="mascot-sparkle">
+        <path d="M35,55 L38,46 L41,55 L50,58 L41,61 L38,70 L35,61 L26,58 Z" fill="#e879f9"/>
+        <path d="M255,75 L257,68 L259,75 L266,77 L259,79 L257,86 L255,79 L248,77 Z" fill="#67e8f9"/>
+        <path d="M65,285 L67,279 L69,285 L75,287 L69,289 L67,295 L65,289 L59,287 Z" fill="#c084fc"/>
+        <path d="M235,295 L237,289 L239,295 L245,297 L239,299 L237,305 L235,299 L229,297 Z" fill="#fdba74"/>
+      </g>
+      <g class="mascot-arm-l"><line x1="105" y1="168" x2="50" y2="210" stroke="#c084fc" stroke-width="16" stroke-linecap="round"/><circle cx="44" cy="216" r="14" fill="white"/><line x1="36" y1="208" x2="32" y2="201" stroke="white" stroke-width="4" stroke-linecap="round"/><line x1="44" y1="203" x2="44" y2="196" stroke="white" stroke-width="4" stroke-linecap="round"/></g>
+      <g class="mascot-arm-r"><line x1="195" y1="168" x2="250" y2="128" stroke="#c084fc" stroke-width="16" stroke-linecap="round"/><circle cx="256" cy="122" r="14" fill="white"/><line x1="256" y1="108" x2="256" y2="100" stroke="white" stroke-width="4" stroke-linecap="round"/></g>
+      <g class="mascot-body">
+        <defs><radialGradient id="ballG" cx="38%" cy="32%" r="70%"><stop offset="0%" stop-color="#f5d0fe"/><stop offset="40%" stop-color="#a5f3fc"/><stop offset="80%" stop-color="#c084fc"/><stop offset="100%" stop-color="#818cf8"/></radialGradient></defs>
+        <circle cx="150" cy="165" r="88" fill="url(#ballG)"/>
+        <ellipse cx="150" cy="108" rx="58" ry="11" fill="none" stroke="#9333ea" stroke-width="1.5" opacity=".5"/>
+        <ellipse cx="150" cy="128" rx="76" ry="13" fill="none" stroke="#9333ea" stroke-width="1.5" opacity=".5"/>
+        <ellipse cx="150" cy="150" rx="87" ry="13" fill="none" stroke="#9333ea" stroke-width="1.5" opacity=".5"/>
+        <ellipse cx="150" cy="174" rx="88" ry="12" fill="none" stroke="#9333ea" stroke-width="1.5" opacity=".5"/>
+        <ellipse cx="150" cy="198" rx="80" ry="11" fill="none" stroke="#9333ea" stroke-width="1.5" opacity=".5"/>
+        <ellipse cx="150" cy="220" rx="63" ry="10" fill="none" stroke="#9333ea" stroke-width="1.5" opacity=".5"/>
+        <line x1="150" y1="79" x2="150" y2="251" stroke="#9333ea" stroke-width="1.5" opacity=".5"/>
+        <line x1="112" y1="82" x2="97" y2="248" stroke="#9333ea" stroke-width="1" opacity=".4"/>
+        <line x1="188" y1="82" x2="203" y2="248" stroke="#9333ea" stroke-width="1" opacity=".4"/>
+        <circle cx="118" cy="120" r="6" fill="white" opacity=".85"/>
+        <circle cx="172" cy="112" r="4" fill="white" opacity=".75"/>
+        <circle cx="196" cy="152" r="5" fill="white" opacity=".65"/>
+        <circle cx="108" cy="182" r="4" fill="white" opacity=".55"/>
+        <path d="M104,158 L111,143 L118,158 L134,158 L122,168 L127,183 L111,173 L95,183 L100,168 L88,158 Z" fill="#e879f9" stroke="#0d0a14" stroke-width="1.5"/>
+        <path d="M104,158 L111,145 L118,158 L131,158 L121,167 L125,180 L111,171 L97,180 L101,167 L91,158 Z" fill="#0d0a14" opacity=".88"/>
+        <path d="M182,158 L189,143 L196,158 L212,158 L200,168 L205,183 L189,173 L173,183 L178,168 L166,158 Z" fill="#e879f9" stroke="#0d0a14" stroke-width="1.5"/>
+        <path d="M182,158 L189,145 L196,158 L209,158 L199,167 L203,180 L189,171 L175,180 L179,167 L169,158 Z" fill="#0d0a14" opacity=".88"/>
+        <line x1="134" y1="159" x2="166" y2="159" stroke="#e879f9" stroke-width="3" stroke-linecap="round"/>
+      </g>
+      <g class="mascot-leg-l"><line x1="126" y1="250" x2="112" y2="305" stroke="#67e8f9" stroke-width="14" stroke-linecap="round"/><ellipse cx="105" cy="314" rx="22" ry="13" fill="#e879f9"/><ellipse cx="97" cy="318" rx="11" ry="7" fill="#0d0a14"/></g>
+      <g class="mascot-leg-r"><line x1="174" y1="250" x2="188" y2="305" stroke="#67e8f9" stroke-width="14" stroke-linecap="round"/><ellipse cx="195" cy="314" rx="22" ry="13" fill="#e879f9"/><ellipse cx="203" cy="318" rx="11" ry="7" fill="#0d0a14"/></g>
+    </svg>
+    <div class="mascot-photo">
+      <img src="https://res.cloudinary.com/dvznmnpys/image/upload/w_500,q_auto,f_auto/v1773781643/Boogielou_-_Outfi_tx2qgc.jpg" alt="Boogielou outfit" loading="lazy"/>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+<!-- NEXT UP — compact centered -->
+<section class="glass nextup-section" id="nextup">
+  <div class="nextup">
+    <div class="nextup-inner">
+      <div>
+        <p class="nextup-label">What's coming</p>
+        <h2 class="nextup-title">NEXT UP</h2>
+        <p class="nextup-text">Keep an eye on socials for upcoming gigs and movements. Something fun is always in the pipeline. 🪩</p>
+        <div class="nextup-btns">
+          <a href="https://www.instagram.com/boogielou.mp3/" target="_blank" class="btn btn-primary">Instagram</a>
+          <a href="https://linktr.ee/boogielou.mp3" target="_blank" class="btn btn-outline">All Links</a>
+        </div>
+      </div>
+      <div class="nextup-img">
+        <img src="https://res.cloudinary.com/dvznmnpys/image/upload/w_400,q_auto,f_auto/v1773769978/Boogielou_image_1_vsfe5r.png" alt="Boogielou in costume"/>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+<!-- CONNECT -->
+<section class="section-z connect" id="connect">
+  <h2 class="connect-title">LET'S CONNECT</h2>
+  <p class="connect-sub">Bookings, press & everything in between</p>
+  <div class="connect-links">
+    <a href="#" class="btn btn-primary">✉ Contact</a>
+    <a href="#" class="btn btn-purple">⬇ Download Press Kit</a>
+    <a href="https://www.instagram.com/boogielou.mp3/" target="_blank" class="btn btn-outline">Instagram</a>
+    <a href="https://soundcloud.com/boogielou" target="_blank" class="btn btn-outline">Soundcloud</a>
+    <a href="https://linktr.ee/boogielou.mp3" target="_blank" class="btn btn-outline">Linktree</a>
+    <a href="https://www.mixcloud.com/back2backdjbattle/talent-spotlight-boogielou-20/" target="_blank" class="btn btn-aqua">Mixcloud</a>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-logo">Boogielou</span>
+  <span>© 2026 · London / Bristol</span>
+  <span class="footer-credit">Made by <a href="https://spotglow-studio.com" target="_blank">Spotglow Studio</a></span>
+</footer>
+
+<script>
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top  = e.clientY + 'px';
+});
+document.addEventListener('click', e => {
+  const colors = ['#e879f9','#c084fc','#67e8f9','#fdba74','#fdf4ff'];
+  for (let i = 0; i < 8; i++) {
+    const s = document.createElement('div');
+    s.className = 'sparkle';
+    s.style.left = e.clientX + 'px';
+    s.style.top  = e.clientY + 'px';
+    s.style.background = colors[Math.floor(Math.random() * colors.length)];
+    const angle = (Math.PI * 2 / 8) * i;
+    const dist  = 30 + Math.random() * 38;
+    s.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+    s.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 900);
+  }
+});
+let muted = true;
+function toggleMute() {
+  muted = !muted;
+  const iframe = document.getElementById('yt-player');
+  iframe.src = iframe.src.replace(/&mute=\d/, '&mute=' + (muted ? 1 : 0));
+  document.getElementById('muteIcon').textContent  = muted ? '🔇' : '🔊';
+  document.getElementById('muteLabel').textContent = muted ? 'Sound on' : 'Mute';
+}
+const mascot = document.getElementById('disco-mascot');
+if (mascot) {
+  document.addEventListener('mousemove', e => {
+    const rx = (e.clientX / window.innerWidth  - 0.5) * 8;
+    const ry = (e.clientY / window.innerHeight - 0.5) * 8;
+    mascot.style.transform = `rotate(${rx * 0.4}deg) translateY(${ry * 0.3}px)`;
+  });
+}
+</script>
+</body>
+</html>
