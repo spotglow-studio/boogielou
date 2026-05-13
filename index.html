@@ -17,7 +17,7 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--dark);col
 
 /* ── AURORA ── */
 .aurora-bg{position:fixed;inset:0;z-index:-2;background:var(--dark)}
-.aurora-layer{position:absolute;inset:-60%;animation-timing-function:ease-in-out;animation-iteration-count:infinite;animation-direction:alternate;filter:blur(35px)}
+.aurora-layer{position:absolute;inset:-60%;animation-timing-function:ease-in-out;animation-iteration-count:infinite;animation-direction:alternate;filter:blur(35px);will-change:transform}
 .aurora-layer:nth-child(1){background:radial-gradient(ellipse 55% 45% at 25% 35%,rgba(232,121,249,.75) 0%,transparent 60%),radial-gradient(ellipse 45% 55% at 75% 25%,rgba(103,232,249,.65) 0%,transparent 55%);animation:a1 10s ease-in-out infinite alternate}
 .aurora-layer:nth-child(2){background:radial-gradient(ellipse 60% 40% at 70% 70%,rgba(192,132,252,.7) 0%,transparent 55%),radial-gradient(ellipse 40% 50% at 20% 75%,rgba(253,186,116,.5) 0%,transparent 50%);animation:a2 13s ease-in-out infinite alternate}
 .aurora-layer:nth-child(3){background:radial-gradient(ellipse 50% 60% at 50% 50%,rgba(74,222,128,.35) 0%,transparent 50%),radial-gradient(ellipse 55% 35% at 85% 15%,rgba(232,121,249,.5) 0%,transparent 50%),radial-gradient(ellipse 40% 45% at 10% 20%,rgba(103,232,249,.4) 0%,transparent 50%);animation:a3 17s ease-in-out infinite alternate}
@@ -263,6 +263,13 @@ nav.scrolled .nav-logo{opacity:1;transform:translateY(0)}
 .nextup-img img{width:260px;filter:drop-shadow(0 0 30px rgba(232,121,249,.5));animation:floatUpDown 3.5s ease-in-out infinite}
 @keyframes floatUpDown{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
 
+/* ── HIGHLIGHT CARDS ── */
+.highlight-card{background:rgba(13,10,20,.55);border:1px solid rgba(232,121,249,.15);padding:1.5rem;backdrop-filter:blur(12px);transition:border-color .2s,transform .2s}
+.highlight-card:hover{border-color:var(--fuchsia);transform:translateY(-3px)}
+.highlight-icon{font-size:1.8rem;display:block;margin-bottom:.75rem}
+.highlight-title{font-family:'Righteous',cursive;font-size:1.1rem;letter-spacing:2px;color:var(--white);margin-bottom:.5rem}
+.highlight-text{color:var(--grey);font-size:.88rem;line-height:1.6}
+
 /* ── CONNECT ── */
 .connect{padding:7rem 2rem;text-align:center;position:relative;overflow:hidden}
 .connect-title{font-family:'Righteous',cursive;font-size:clamp(3rem,8vw,7rem);letter-spacing:4px;line-height:1;margin-bottom:.5rem;background:linear-gradient(135deg,var(--white) 0%,var(--fuchsia) 30%,var(--lilac) 60%,var(--aqua) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200%;animation:gradShift 5s ease-in-out infinite alternate}
@@ -278,32 +285,37 @@ footer{padding:2.5rem 3rem;border-top:1px solid rgba(255,255,255,.07);display:fl
 .footer-made{font-size:.75rem;letter-spacing:2px;color:var(--grey);display:block;font-family:'DM Sans',sans-serif;font-weight:300;margin-bottom:.1rem}
 .footer-copy{color:var(--grey);font-size:.72rem;letter-spacing:1.5px}
 
-/* ── RESPONSIVE ── */
-/* Tablet: smaller video so ticker fits */
-@media(max-width:1024px) and (min-width:769px){
-  .video-wrap{width:min(360px,60vw)}
-  .eq-bar-group{height:90px}
-  .hero{gap:.4rem}
+@media(hover:none),(pointer:coarse){
+  *{cursor:auto!important}
+  #cursor{display:none!important}
 }
 @media(max-width:768px){
+  /* Stop all aurora animations on mobile */
+  .aurora-layer{animation:none!important;filter:none!important}
+  .aurora-layer:nth-child(1){background:radial-gradient(ellipse 80% 60% at 30% 40%,rgba(232,121,249,.5) 0%,transparent 70%)}
+  .aurora-layer:nth-child(2){background:radial-gradient(ellipse 70% 60% at 70% 60%,rgba(192,132,252,.4) 0%,transparent 70%)}
+  .aurora-layer:nth-child(3){background:radial-gradient(ellipse 60% 50% at 50% 30%,rgba(103,232,249,.3) 0%,transparent 70%)}
   nav{padding:1rem 1.5rem}
   .nav-links{display:none}
   .hamburger{display:flex}
   .mobile-connect{display:block!important}
-  .footer-br{display:none}
-  .mobile-nav-right{display:none}
+  .mobile-nav-right{display:flex!important}
   .eq-side{display:none}
-  .about{grid-template-columns:1fr;gap:2.5rem}
+  .about{grid-template-columns:1fr;gap:2rem}
+  .about-video-wrap{width:100%;max-width:400px;margin:0 auto}
   .sets-grid{grid-template-columns:repeat(2,1fr)}
   .set-card:nth-child(3){grid-column:1 / -1;max-width:55%;margin:0 auto;width:100%}
   .mascot-duo{flex-direction:column;align-items:center}
-  .insta-grid{grid-template-columns:repeat(3,1fr);gap:4px}
+  .insta-grid{grid-template-columns:repeat(3,1fr);gap:3px}
   footer{flex-direction:column;align-items:center;text-align:center;gap:.6rem}
   .footer-copy{text-align:center}
+  /* Reduce aurora on mobile for performance */
+  .aurora-layer{filter:blur(50px)}
 }
 @media(max-width:480px){
-  .insta-grid{grid-template-columns:repeat(3,1fr);gap:3px}
+  .insta-grid{grid-template-columns:repeat(3,1fr);gap:2px}
   .set-card:nth-child(3){max-width:70%}
+  .retro-title{font-size:clamp(3rem,18vw,5rem)}
 }
 </style>
 </head>
@@ -381,16 +393,17 @@ footer{padding:2.5rem 3rem;border-top:1px solid rgba(255,255,255,.07);display:fl
     <div class="about-content">
       <p class="about-label">DJ</p>
       <h2 class="about-title">BOOGIELOU</h2>
-      <p class="about-text">She's the one who turns up in an inflatable costume and leaves the dance floor absolutely ecstatic. Boogielou is a DJ who genuinely loves what she does — and that energy is impossible not to catch.</p>
-      <blockquote class="about-quote">Hi! I'm boogielou (aka Charlie), a London-based DJ who plays a fusion of house music, disco/funk, UKG and bass-heavy beats — basically anything that'll get you boogie'ing! With a particular love for classic anthems with a bassy twist.</blockquote>
+      <p class="about-text">Hope you're ready to hit your 10,000 steps, as you'll be two-stepping away at her next gig! boogie by name, boogie by nature, Boogielou is a DJ who genuinely loves what she does — and that energy is impossible not to catch.</p>
+      <p class="about-text" style="margin-top:.5rem">Known for her funky house and disco blends, expect classic anthems with fun, housey twists and a guaranteed good time. She's supported Fatboy Slim and Olugbenga, played at Glastonbury 2025 and DJ-ed at venues including Colour Factory Hackney, Tola Peckham and Oculist Brighton.</p>
+      <blockquote class="about-quote">Hi! I'm boogielou (aka Charlie), a DJ who plays a fusion of house music, disco/funk, UKG and bass-heavy beats — basically anything that'll get you boogie'ing! With a particular love for classic anthems with a bassy twist.</blockquote>
       <div class="tags">
         <span class="tag">House</span><span class="tag">Disco / Funk</span>
         <span class="tag">UKG</span><span class="tag">Bass</span>
-        <span class="tag">Electronic</span><span class="tag">Tech</span>
+        <span class="tag">London / Bristol</span><span class="tag">Pioneer / CDJs</span>
       </div>
       <div class="about-btns">
-        <a href="#connect" class="btn btn-primary">✉ Contact</a>
-        <a href="#" class="btn btn-purple">⬇ Download Press Kit</a>
+        <a href="mailto:charlielporter23@gmail.com" class="btn btn-primary">✉ Contact</a>
+        <a href="https://drive.google.com/drive/folders/1t7cuyrtgJX6y2kpH-I47T5vWfvUnWq7r" target="_blank" class="btn btn-purple">⬇ Download Press Kit</a>
       </div>
     </div>
     <!-- Video right -->
@@ -408,6 +421,36 @@ footer{padding:2.5rem 3rem;border-top:1px solid rgba(255,255,255,.07);display:fl
   </div>
 </section>
 <div class="divider"></div>
+
+<!-- STAGES & HIGHLIGHTS -->
+<section class="section-z" style="padding:5rem 2rem;position:relative;z-index:1">
+  <div class="section-header">
+    <h2 class="section-title">STAGES & HIGHLIGHTS</h2>
+    <p class="section-sub">Where the boogie has been</p>
+  </div>
+  <div style="max-width:900px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem">
+    <div class="highlight-card">
+      <span class="highlight-icon">🏆</span>
+      <h3 class="highlight-title">Block Beatport Competition</h3>
+      <p class="highlight-text">Winner — DJ competition winner cementing her place in the London scene</p>
+    </div>
+    <div class="highlight-card">
+      <span class="highlight-icon">🎪</span>
+      <h3 class="highlight-title">Glastonbury 2025</h3>
+      <p class="highlight-text">Played one of the world's most iconic music festivals</p>
+    </div>
+    <div class="highlight-card">
+      <span class="highlight-icon">🎧</span>
+      <h3 class="highlight-title">Supported Fatboy Slim</h3>
+      <p class="highlight-text">Support slot for legendary DJ and producer Fatboy Slim</p>
+    </div>
+    <div class="highlight-card">
+      <span class="highlight-icon">🎵</span>
+      <h3 class="highlight-title">Venues</h3>
+      <p class="highlight-text">Colour Factory Hackney · Tola Peckham · The Prospect Building Bristol · Oculist Brighton</p>
+    </div>
+  </div>
+</section>
 
 <!-- SETS -->
 <section class="section-z sets" id="sets">
@@ -532,7 +575,7 @@ footer{padding:2.5rem 3rem;border-top:1px solid rgba(255,255,255,.07);display:fl
   <p class="connect-sub">Bookings, press & everything in between</p>
   <div class="connect-links">
     <div class="connect-row">
-      <a href="#" class="btn btn-primary">✉ Contact</a>
+      <a href="mailto:charlielporter23@gmail.com" class="btn btn-primary">✉ Contact</a>
       <a href="https://www.instagram.com/boogielou.mp3/" target="_blank" class="btn btn-purple">Instagram</a>
     </div>
     <div class="connect-row">
@@ -541,7 +584,7 @@ footer{padding:2.5rem 3rem;border-top:1px solid rgba(255,255,255,.07);display:fl
       <a href="https://www.mixcloud.com/back2backdjbattle/talent-spotlight-boogielou-20/" target="_blank" class="btn btn-outline">Mixcloud</a>
     </div>
     <div class="connect-row">
-      <a href="#" class="btn btn-aqua">⬇ Press Kit</a>
+      <a href="https://drive.google.com/drive/folders/1t7cuyrtgJX6y2kpH-I47T5vWfvUnWq7r" target="_blank" class="btn btn-aqua">⬇ Press Kit</a>
     </div>
   </div>
 </section>
